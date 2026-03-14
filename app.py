@@ -1,24 +1,31 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 
 app = Flask(__name__)
 
-usuario_correcto = "admin"
-password_correcto = "1234"
+notas = []
 
 @app.route("/")
-def login():
-    return render_template("login.html")
+def inicio():
+    return render_template("notas.html", notas=notas)
 
-@app.route("/validar", methods=["POST"])
-def validar():
+@app.route("/guardar", methods=["POST"])
+def guardar():
 
-    usuario = request.form["usuario"]
-    password = request.form["password"]
+    nombre = request.form["nombre"]
+    n1 = float(request.form["nota1"])
+    n2 = float(request.form["nota2"])
+    n3 = float(request.form["nota3"])
 
-    if usuario == usuario_correcto and password == password_correcto:
-        return render_template("panel.html", usuario=usuario)
+    promedio = (n1 + n2 + n3) / 3
 
-    else:
-        return "Usuario o contraseña incorrectos"
+    notas.append({
+        "nombre": nombre,
+        "nota1": n1,
+        "nota2": n2,
+        "nota3": n3,
+        "promedio": round(promedio,2)
+    })
+
+    return redirect("/")
 
 app.run(debug=True)
